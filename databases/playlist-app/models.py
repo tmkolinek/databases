@@ -5,23 +5,23 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class Playlist(db.Model):
-    """Playlist."""
-    __tablename__ = 'playlist'
+# class Playlist(db.Model):
+#     """Playlist."""
+#     __tablename__ = 'playlist'
 
-    id = db.Column(db.Integer, primary_key=True)
+#     id = db.Column(db.Integer, primary_key=True)
 
-    name = db.Column(db.String(140),
-                     nullable=False,
-                     )
+#     name = db.Column(db.String(140),
+#                      nullable=False,
+#                      )
 
-    description = db.Column(
-        db.String(500),
-    )
+#     description = db.Column(
+#         db.String(500),
+#     )
 
-    songs = db.Column(
-        db.String(500),
-    )
+#     songs = db.Column(
+#         db.String(500),
+#     )
 
 
 
@@ -44,42 +44,70 @@ class Playlist(db.Model):
 #     )
 
     # ADD THE NECESSARY CODE HERE
+# class Song(db.Model):
+#     """Song."""
+
+#     __tablename__ = 'song'
+
+#     id = db.Column(db.Integer, primary_key=True)
+
+#     title = db.Column(db.String(140), nullable=False)
+
+#     artist = db.Column(db.String(20), nullable=False)
+
+
+#     # ADD THE NECESSARY CODE HERE
+# class PlaylistSong(db.Model):
+#     """Mapping of a playlist to a song."""
+
+#     # ADD THE NECESSARY CODE HERE
+
+#     __tablename__ = 'playlistsong'
+
+#     id = db.Column(
+#         db.Integer,
+#         primary_key=True,
+#     )
+
+#     playlist_id = db.Column(
+#         db.Integer,
+#         db.ForeignKey('playlist.id', ondelete='cascade'),
+#         primary_key=True,
+#     )
+
+#     song_id = db.Column(
+#         db.Integer,
+#         db.ForeignKey('song.id', ondelete='cascade'),
+#         primary_key=True,
+#     )
+
+class Playlist(db.Model):
+    """Playlist."""
+    __tablename__ = "playlists"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.Text, nullable=False, unique=True)
+    description = db.Column(db.Text)
+
+    
 class Song(db.Model):
     """Song."""
+    __tablename__ = "songs"
 
-    __tablename__ = 'song'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.Text, nullable=False, unique=True)
+    artist = db.Column(db.Text, nullable=False, unique=True)
 
-    id = db.Column(db.Integer, primary_key=True)
+    playlists = db.relationship('Playlist', secondary='playlists_songs', backref='songs')
+    
 
-    title = db.Column(db.String(140), nullable=False)
-
-    artist = db.Column(db.String(20), nullable=False)
-
-
-    # ADD THE NECESSARY CODE HERE
 class PlaylistSong(db.Model):
     """Mapping of a playlist to a song."""
+    __tablename__ = "playlists_songs"
 
-    # ADD THE NECESSARY CODE HERE
-
-    __tablename__ = 'playlistsong'
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True,
-    )
-
-    playlist_id = db.Column(
-        db.Integer,
-        db.ForeignKey('playlist.id', ondelete='cascade'),
-        primary_key=True,
-    )
-
-    song_id = db.Column(
-        db.Integer,
-        db.ForeignKey('song.id', ondelete='cascade'),
-        primary_key=True,
-    )
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    playlist_id = db.Column(db.Integer, db.ForeignKey('playlists.id'), nullable=False)
+    song_id = db.Column(db.Integer, db.ForeignKey('songs.id'), nullable=False)
 # DO NOT MODIFY THIS FUNCTION
 def connect_db(app):
     """Connect to database."""
